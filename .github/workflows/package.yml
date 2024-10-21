@@ -1,4 +1,4 @@
-name: pack app
+name: Zip First-Level Subdirectory and Create Release
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main  # Change to your default branch if different
 
 jobs:
-  package_app:
+  zip:
     runs-on: ubuntu-latest
 
     steps:
@@ -16,8 +16,8 @@ jobs:
       - name: Find first-level subdirectory
         id: find_subdir
         run: |
-          # Get the first-level subdirectory
-          SUBDIR=$(find . -maxdepth 1 -type d | tail -n +2 | head -n 1)
+          # Get the first-level subdirectory excluding .git
+          SUBDIR=$(find . -maxdepth 1 -type d ! -name .git | tail -n +2 | head -n 1)
           echo "First-level subdirectory: $SUBDIR"
           echo "subdir=$SUBDIR" >> $GITHUB_ENV
 
@@ -35,7 +35,17 @@ jobs:
           fi
 
       - name: Upload tar.gz
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v2
         with:
           name: zipped-first-level-subdirectory
           path: "${REPO_NAME}.tar.gz"
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag: ${{ github.ref }}  # Use the tag of the current commit
+          release_name: "Release ${{ github.sha }}"
+          files: "${REPO_NAME}.tar.gz"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
