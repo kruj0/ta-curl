@@ -1,53 +1,19 @@
-name: Zip First-Level Subdirectory and Create Release
+name: build_the_app
 
 on:
   push:
     branches:
-      - main  # Change to your default branch if different
-    tags:
-      - 'v*'  # Trigger on version tags
+      - main 
 
 jobs:
-  zip:
+  build:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Find first-level subdirectory
-        id: find_subdir
-        run: |
-          # Get the first-level subdirectory excluding .git
-          SUBDIR=$(find . -maxdepth 1 -type d ! -name .github | tail -n +2 | head -n 1)
-          echo "First-level subdirectory: $SUBDIR"
-          echo "subdir=$SUBDIR" >> $GITHUB_ENV
-
-      - name: Create tar.gz
-        run: |
-          REPO_NAME=$(basename $GITHUB_REPOSITORY)  # Get the repository name
-          OUTPUT_FILE="${REPO_NAME}.tar.gz"
-          
-          if [ -d "$subdir" ]; then
-            tar -czf "$OUTPUT_FILE" -C "$subdir" .
-            echo "Created $OUTPUT_FILE"
-          else
-            echo "No first-level subdirectory found."
-            exit 1
-          fi
-
-      - name: Upload tar.gz
-        uses: actions/upload-artifact@v4
+      - name: Build the Splunk app
+        uses: VatsalJagani/splunk-app-action@v4
         with:
-          name: zipped-first-level-subdirectory
-          path: "${REPO_NAME}.tar.gz"
-
-      - name: Create Release
-        id: create_release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ github.ref }}  # Use the tag of the current commit
-          name: "Release ${{ github.ref }}"  # Set the release name
-          files: "${REPO_NAME}.tar.gz"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          app_dir: "package"
