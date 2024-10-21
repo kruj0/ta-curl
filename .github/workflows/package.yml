@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main  # Change to your default branch if different
+    tags:
+      - 'v*'  # Trigger on version tags
 
 jobs:
   zip:
@@ -44,8 +46,8 @@ jobs:
         id: create_release
         uses: softprops/action-gh-release@v1
         with:
-          tag: ${{ github.ref }}  # Use the tag of the current commit
-          release_name: "Release ${{ github.sha }}"
+          tag_name: ${{ github.ref }}  # Use the tag of the current commit
+          name: "Release ${{ github.ref }}"  # Set the release name
           files: "${REPO_NAME}.tar.gz"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
