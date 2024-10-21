@@ -425,8 +425,8 @@ def execute():
                 if method.lower() in ("put"):
                     Result = put(uri,sessionKey,cert,token,user_headers,data,user,passwd,timeout)
                 if method.lower() in ("delete","del","d"):
-                    Result = delete(uri,sessionKey,cert,token,user_headers,data,user,passwd,timeout)
-
+                    Result = delete(uri,sessionKey,cert,verify,token,user_headers,data,user,passwd,timeout)
+ 
                 # append the result to splunk result payload
                 result['curl_status'] = Result['status']
                 result['curl_message'] = Result['message']
