@@ -19,7 +19,7 @@ jobs:
         id: find_subdir
         run: |
           # Get the first-level subdirectory excluding .git
-          SUBDIR=$(find . -maxdepth 1 -type d ! -name .git | tail -n +2 | head -n 1)
+          SUBDIR=$(find . -maxdepth 1 -type d ! -name .github | tail -n +2 | head -n 1)
           echo "First-level subdirectory: $SUBDIR"
           echo "subdir=$SUBDIR" >> $GITHUB_ENV
 
