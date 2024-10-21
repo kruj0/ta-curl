@@ -1,0 +1,41 @@
+name: pack app
+
+on:
+  push:
+    branches:
+      - main  # Change to your default branch if different
+
+jobs:
+  zip:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Find first-level subdirectory
+        id: find_subdir
+        run: |
+          # Get the first-level subdirectory
+          SUBDIR=$(find . -maxdepth 1 -type d | tail -n +2 | head -n 1)
+          echo "First-level subdirectory: $SUBDIR"
+          echo "subdir=$SUBDIR" >> $GITHUB_ENV
+
+      - name: Create tar.gz
+        run: |
+          REPO_NAME=$(basename $GITHUB_REPOSITORY)  # Get the repository name
+          OUTPUT_FILE="${REPO_NAME}.tar.gz"
+          
+          if [ -d "$subdir" ]; then
+            tar -czf "$OUTPUT_FILE" -C "$subdir" .
+            echo "Created $OUTPUT_FILE"
+          else
+            echo "No first-level subdirectory found."
+            exit 1
+          fi
+
+      - name: Upload tar.gz
+        uses: actions/upload-artifact@v2
+        with:
+          name: zipped-first-level-subdirectory
+          path: "${REPO_NAME}.tar.gz"
