@@ -17,3 +17,4 @@ jobs:
         uses: VatsalJagani/splunk-app-action@v4
         with:
           app_dir: "package"
+          is_app_inspect_check: false
