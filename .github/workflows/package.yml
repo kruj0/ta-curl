@@ -18,3 +18,4 @@ jobs:
         with:
           app_dir: "package"
           is_app_inspect_check: false
+          my_github_token: ${{ secrets.MY_GITHUB_TOKEN }}
